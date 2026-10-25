@@ -2,29 +2,60 @@
 
 **Watch it. Want it. Own it.**
 
-reelMarket is a mobile-first social-commerce prototype: discover products through a creator-style feed, explore seller storefronts, save products, add items to a demo bag, and explore auction-style listings.
+reelMarket is being developed as a mobile-first social-commerce marketplace where people discover products through short videos, shop from sellers, and eventually bid in real auctions.
 
-## Current prototype
-- Responsive Instagram-inspired visual language with original reelMarket branding.
-- Product feed with creator stories, seller profiles, likes, saves, follow controls, search, and product detail modals.
-- Explore grid, saved shelf, following feed, and auction listings.
-- Demo listing creation, shopping bag, and simulated bid flow.
-- Accessible labels, reduced-motion support, mobile navigation, and responsive layouts.
+## Repository status
 
-## Run it
-This is a static HTML prototype. Open `index.html` in a browser, or enable GitHub Pages in repository settings to publish it.
+This repository currently contains two distinct pieces:
 
-## Important: prototype boundaries
-The current interactions run in the browser and use in-memory sample data. User-created listings, follows, likes, and demo bids are not persisted or shared across users. Product imagery is loaded from Unsplash and typography from Google Fonts. The prototype does **not** process payments, upload videos, authenticate users, message sellers, or run real auctions.
+- **Frontend prototype:** `index.html`, a static UI prototype with sample feed data and simulated interactions.
+- **Backend foundation:** `backend/`, a FastAPI application with a persistent SQLAlchemy product catalog API, validation schemas, Dockerfile, environment example, and API tests.
 
-Before a public production launch, implement and test:
-1. Authentication, seller onboarding, role-based access, and account recovery.
-2. Persistent product, media, seller, order, and moderation data.
-3. Secure video/image upload with file validation, storage limits, and abuse scanning.
-4. Server-authoritative auctions with atomic bid updates, closing rules, anti-sniping policy, and audit logs.
-5. Payment gateway integration, refunds, seller payouts, shipping, tax, and dispute workflows.
-6. Reporting, content moderation, seller verification, privacy controls, rate limiting, and security monitoring.
-7. Automated tests, accessibility checks, performance budgets, and deployment secrets management.
+Neither piece should be described as a production-ready marketplace yet.
 
-## Suggested next architecture
-Keep the initial web client lightweight, then add a typed API and database behind explicit domain boundaries: identity, catalog, media, social interactions, auctions, checkout/orders, and moderation. Never trust client-side prices, seller roles, auction clocks, or bid amounts as authoritative.
+## Backend quick start
+
+```bash
+cd backend
+python -m venv .venv
+# Activate the virtual environment
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+- API health: `http://127.0.0.1:8000/api/v1/health`
+- Interactive API docs: `http://127.0.0.1:8000/docs`
+- Product API details and limitations: [backend/README.md](backend/README.md)
+
+## Current backend API
+
+- `GET /api/v1/health`
+- `POST /api/v1/products`
+- `GET /api/v1/products?q=...&category=...`
+- `GET /api/v1/products/{product_id}`
+
+Product records are stored in SQLite for local development. Prices are integer minor units, so `49900` represents ₹499.00.
+
+## Not implemented yet
+
+- Authentication, sessions, seller ownership, and account recovery
+- Real image/video uploads and media storage
+- Likes, follows, comments, messaging, and notifications persisted across accounts
+- Cart checkout, orders, payments, refunds, shipping, and payouts
+- Server-authoritative auctions and anti-sniping rules
+- Moderation, seller verification, abuse reporting, and production monitoring
+- Production database migrations, deployment configuration, and security hardening
+
+The frontend's likes, follows, bag, listing creation, and bids remain demo-only. Do not use it for real transactions.
+
+## Build roadmap
+
+1. Catalog API and automated tests
+2. Identity, users, and seller permissions
+3. Media upload/storage and real video feed
+4. Social interactions and product discovery
+5. Cart, orders, and payment-provider integration
+6. Atomic auction engine with audit trail
+7. Moderation, security review, and production deployment
+
+A GitHub Pages deployment is separate from the backend deployment. The Pages workflow needs the repository's Pages source configured to GitHub Actions.
